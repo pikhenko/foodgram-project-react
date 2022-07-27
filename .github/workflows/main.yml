@@ -70,7 +70,12 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d
-  
+            docker-compose exec backend python manage.py makemigrations
+            docker-compose exec backend python manage.py migrate
+            docker-compose exec backend python manage.py add_igridiensts_db
+            docker-compose exec backend python manage.py add_tags_db
+            docker-compose exec backend python manage.py collectstatic --noinput
+ 
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
