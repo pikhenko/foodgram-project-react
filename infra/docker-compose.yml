@@ -21,7 +21,6 @@ services:
 
   frontend:
     image: apikhenko/foodgram:latest
-    dockerfile: ../frontend/Dockerfile
     volumes:
       - ../frontend/:/app/result_build/  
   
