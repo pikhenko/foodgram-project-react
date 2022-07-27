@@ -43,7 +43,7 @@ jobs:
         with:
           context: frontend
           push: true
-          tags: apikhenko/foodgram_frontend:latest
+          tags: apikhenko/foodgram_front:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker pull apikhenko/foodgram:latest
-            sudo docker pull apikhenko/foodgram_frontend:latest
+            sudo docker pull apikhenko/foodgram_front:latest
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose rm frontend

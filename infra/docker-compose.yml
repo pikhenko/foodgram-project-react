@@ -20,7 +20,7 @@ services:
       - ./.env
 
   frontend:
-    image: apikhenko/foodgram_frondend:latest
+    image: apikhenko/foodgram_front:latest
     volumes:
       - ../:/app/result_build/  
   
