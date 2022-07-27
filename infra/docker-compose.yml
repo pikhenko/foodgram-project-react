@@ -20,9 +20,9 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: apikhenko/foodgram:latest
+    context: ../frontend
+    dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/  
   
