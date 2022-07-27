@@ -20,9 +20,9 @@ services:
       - ./.env
 
   frontend:
-    image: apikhenko/foodgram:latest
+    image: apikhenko/foodgram_frondend:latest
     volumes:
-      - ../frontend/:/app/result_build/  
+      - ../:/app/result_build/  
   
   nginx:
     image: nginx:1.19.3
