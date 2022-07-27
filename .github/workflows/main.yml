@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
 
-  build_and_push_to_docker_hub backend:
+  build_and_push_to_docker_hub_backend:
     name: Push Docker image backend to Docker Hub
     runs-on: ubuntu-latest
     steps:
@@ -24,7 +24,7 @@ jobs:
           push: true
           tags: apikhenko/foodgram:latest
 
-  build_and_push_to_docker_hub frontend:
+  build_and_push_to_docker_hub_frontend:
     name: Push Docker image backend to Docker Hub
     runs-on: ubuntu-latest
     steps:
