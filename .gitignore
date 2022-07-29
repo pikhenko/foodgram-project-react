@@ -1,5 +1,3 @@
-.vscode/
-
 __pycache__/
 *.py[cod]
 *$py.class
@@ -98,3 +96,5 @@ dmypy.json
 .pyre/
 
 .idea
+
+.vscode
