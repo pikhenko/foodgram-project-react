@@ -1,24 +1,25 @@
 from http import HTTPStatus
 
+from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import get_list_or_404, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Subscribe, Tag)
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from users.models import User
 
 from .filters import IngredientSearchFilter, RecipeFilters
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, RecipeSerializerPost,
                           RegistrationSerializer, ShoppingCartSerializer,
                           SubscriptionSerializer, TagSerializer)
+from users.models import User
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Subscribe, Tag)
 
 
 class CreateUserView(UserViewSet):
@@ -33,7 +34,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return get_list_or_404(User, following__user=self.request.user)
+        return User.objects.filter(following__user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         user_id = self.kwargs.get('users_id')
@@ -119,22 +120,10 @@ class DownloadShoppingCart(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'],)
     def download(self, request):
-        final_list = {}
-        ingredients = IngredientAmount.objects.filter(
-            recipe__shoppingcarts__user=request.user).values_list(
-            'ingredient__name', 'ingredient__measurement_unit',
-            'amount'
-        )
-
-        for item in ingredients:
-            name = item[0]
-            if name not in final_list:
-                final_list[name] = {
-                    'measurement_unit': item[1],
-                    'amount': item[2]
-                }
-            else:
-                final_list[name]['amount'] += item[2]
+        final_list = IngredientAmount.objects.filter(
+            recipe__shoppingcarts__user=request.user).values(
+            'ingredient__name', 'ingredient__measurement_unit').order_by(
+                'ingredient__name').annotate(ingredient_total=Sum('amount'))
         pdfmetrics.registerFont(
             TTFont('FreeSans', 'data/FreeSans.ttf', 'UTF-8'))
         response = HttpResponse(content_type='application/pdf')
@@ -145,10 +134,15 @@ class DownloadShoppingCart(viewsets.ModelViewSet):
         page.drawString(250, 800, 'Список покупок')
         page.setFont('FreeSans', size=16)
         height = 750
-        for i, (name, data) in enumerate(final_list.items(), 1):
-            page.drawString(75, height, (f'{i}. {name} - {data["amount"]} '
-                                         f'{data["measurement_unit"]}'))
-            height -= 25
+        for number, item in enumerate(final_list, start=1):
+            page.drawString(
+                75,
+                height,
+                f'{number}.  {item["ingredient__name"]} - '
+                f'{item["ingredient_total"]}'
+                f' {item["ingredient__measurement_unit"]}'
+            )
+            height -= 30
         page.showPage()
         page.save()
         return response

@@ -1,9 +1,10 @@
 from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
+from users.models import User
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Subscribe, Tag, TagRecipe)
-from rest_framework import serializers
-from users.models import User
 
 
 class CommonSubscribed(metaclass=serializers.SerializerMetaclass):
@@ -13,11 +14,8 @@ class CommonSubscribed(metaclass=serializers.SerializerMetaclass):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if Subscribe.objects.filter(
-                user=request.user, following__id=obj.id).exists():
-            return True
-        else:
-            return False
+        return Subscribe.objects.filter(
+                user=request.user, following__id=obj.id).exists()
 
 
 class CommonRecipe(metaclass=serializers.SerializerMetaclass):
@@ -28,21 +26,15 @@ class CommonRecipe(metaclass=serializers.SerializerMetaclass):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if Favorite.objects.filter(user=request.user,
-                                   recipe__id=obj.id).exists():
-            return True
-        else:
-            return False
+        return Favorite.objects.filter(
+            user=request.user, recipe__id=obj.id).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if ShoppingCart.objects.filter(user=request.user,
-                                       recipe__id=obj.id).exists():
-            return True
-        else:
-            return False
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe__id=obj.id).exists()
 
 
 class CommonCount(metaclass=serializers.SerializerMetaclass):
@@ -154,59 +146,41 @@ class RecipeSerializerPost(serializers.ModelSerializer,
                   'is_in_shopping_cart', 'is_favorited')
 
     def validate_ingredients(self, value):
+        ingredients = self.initial_data.get('ingredients')
         ingredients_list = []
-        ingredients = value
         for ingredient in ingredients:
-            if ingredient['amount'] < 1:
+            if int(ingredient['amount']) < 1:
                 raise serializers.ValidationError(
-                    'Количество должно быть равным или больше 1!')
-            id_to_check = ingredient['ingredient']['id']
+                    'Количество ингредиента должно быть больше или равно 1')
+            id_to_check = ingredient['id']
             ingredient_to_check = Ingredient.objects.filter(id=id_to_check)
             if not ingredient_to_check.exists():
                 raise serializers.ValidationError(
-                    'Данного продукта нет в базе!')
+                    'Данного ингредиента нет в базе данных!')
             if ingredient_to_check in ingredients_list:
                 raise serializers.ValidationError(
-                    'Данные продукты повторяются в рецепте!')
+                    'Данные ингредиенты повторяются в рецепте!')
             ingredients_list.append(ingredient_to_check)
         return value
 
     def add_tags_and_ingredients(self, tags_data, ingredients, recipe):
         for tag_data in tags_data:
             recipe.tags.add(tag_data)
-            recipe.save()
+        ingredient_list = []
         for ingredient in ingredients:
-            if not IngredientAmount.objects.filter(
-                    ingredient_id=ingredient['ingredient']['id'],
-                    recipe=recipe).exists():
-                ingredientrecipe = IngredientAmount.objects.create(
-                    ingredient_id=ingredient['ingredient']['id'],
-                    recipe=recipe)
-                ingredientrecipe.amount = ingredient['amount']
-                ingredientrecipe.save()
-            else:
-                IngredientAmount.objects.filter(
-                    recipe=recipe).delete()
-                recipe.delete()
-                raise serializers.ValidationError(
-                    'Данные продукты повторяются в рецепте!')
+            new_ingredient = IngredientAmount(
+                recipe=recipe,
+                ingredient_id=ingredient['ingredient']['id'],
+                amount=ingredient['amount']
+                )
+            ingredient_list.append(new_ingredient)
+        IngredientAmount.objects.bulk_create(ingredient_list)
         return recipe
 
     def create(self, validated_data):
-        author = validated_data.get('author')
         tags_data = validated_data.pop('tags')
-        name = validated_data.get('name')
-        image = validated_data.get('image')
-        text = validated_data.get('text')
-        cooking_time = validated_data.get('cooking_time')
         ingredients = validated_data.pop('ingredientamount')
-        recipe = Recipe.objects.create(
-            author=author,
-            name=name,
-            image=image,
-            text=text,
-            cooking_time=cooking_time,
-        )
+        recipe = Recipe.objects.create(**validated_data)
         recipe = self.add_tags_and_ingredients(tags_data, ingredients, recipe)
         return recipe
 
@@ -218,7 +192,6 @@ class RecipeSerializerPost(serializers.ModelSerializer,
         instance = self.add_tags_and_ingredients(
             tags_data, ingredients, instance)
         super().update(instance, validated_data)
-        instance.save()
         return instance
 
 

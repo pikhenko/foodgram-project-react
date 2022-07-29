@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -7,15 +8,15 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Название',
-        help_text='Введите название продуктов')
+        help_text='Введите название ингредиентов')
     measurement_unit = models.CharField(
         max_length=200,
         verbose_name='Единицы измерения',
         help_text='Введите единицы измерения')
 
     class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = 'Игредиенты'
+        verbose_name = 'Ингредиенты'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -80,8 +81,8 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientAmount',
         related_name='recipes',
-        verbose_name='Продукты в рецепте',
-        help_text='Выберите продукты рецепта')
+        verbose_name='ингредиенты в рецепте',
+        help_text='Выберите ингредиенты рецепта')
     tags = models.ManyToManyField(
         Tag,
         through='TagRecipe',
@@ -166,8 +167,8 @@ class IngredientAmount(models.Model):
         Ingredient,
         on_delete=models.CASCADE,
         related_name='ingredientamount',
-        verbose_name='Продукты рецепта',
-        help_text='Добавить продукты рецепта в корзину')
+        verbose_name='Ингредиенты в рецепте',
+        help_text='Добавить ингредиенты для рецепта в корзину')
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -178,13 +179,13 @@ class IngredientAmount(models.Model):
     amount = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)],
-        verbose_name='Количество продукта',
-        help_text='Введите количество продукта'
+        verbose_name='Количество ингредиента',
+        help_text='Введите количество ингредиента'
     )
 
     class Meta:
-        verbose_name = 'Продукты в рецепте'
-        verbose_name_plural = 'Продукты в рецепте'
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
         constraints = [
             models.UniqueConstraint(fields=['ingredient', 'recipe'],
                                     name='unique_ingredientamount')
