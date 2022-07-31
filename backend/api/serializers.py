@@ -146,13 +146,13 @@ class RecipeSerializerPost(serializers.ModelSerializer,
                   'is_in_shopping_cart', 'is_favorited')
 
     def validate_ingredients(self, value):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = value
         ingredients_list = []
         for ingredient in ingredients:
             if int(ingredient['amount']) < 1:
                 raise serializers.ValidationError(
                     'Количество ингредиента должно быть больше или равно 1')
-            id_to_check = ingredient['id']
+            id_to_check = ingredient['ingredient']['id']
             ingredient_to_check = Ingredient.objects.filter(id=id_to_check)
             if not ingredient_to_check.exists():
                 raise serializers.ValidationError(

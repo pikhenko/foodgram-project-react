@@ -15,8 +15,8 @@ class Ingredient(models.Model):
         help_text='Введите единицы измерения')
 
     class Meta:
-        verbose_name = 'Ингредиенты'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиент'
 
     def __str__(self):
         return self.name
