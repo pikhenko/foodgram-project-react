@@ -1,0 +1,7 @@
+SECRET_KEY = 'django-insecure-kg)(z7r&e$#qyj)_z2goc8hls-9@97*q)d7*vw**p8625%xp7p'
+DB_ENGINE = django.db.backends.postgresql
+DB_NAME = postgres
+POSTGRES_USER = postgres
+POSTGRES_PASSWORD = postgres
+DB_HOST = db
+DB_PORT = 5432
