@@ -61,7 +61,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # permission_classes = [permissions.AllowAny]
     filter_class = RecipeFilters
     filter_backends = [DjangoFilterBackend, ]
 
@@ -98,9 +97,6 @@ class BaseFavoriteCartViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         recipe_id = self.kwargs['recipes_id']
         user_id = request.user.id
-        # object = get_object_or_404(
-        #     self.model, user__id=user_id, recipe__id=recipe_id)
-        # object.delete()
         get_object_or_404(
             self.model, user__id=user_id, recipe__id=recipe_id).delete()
         return Response(HTTPStatus.NO_CONTENT)
