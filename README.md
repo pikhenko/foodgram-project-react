@@ -10,3 +10,5 @@ docker-compose exec backend python manage.py add_tags_db
 docker-compose exec backend python manage.py createsuperuser
 
 docker-compose exec backend python manage.py collectstatic --noinput
+
+a
