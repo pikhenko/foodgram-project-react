@@ -145,8 +145,7 @@ class RecipeSerializerPost(serializers.ModelSerializer,
                   'ingredients', 'tags', 'cooking_time',
                   'is_in_shopping_cart', 'is_favorited')
 
-    def validate_ingredients(self, value):
-        ingredients = value
+    def validate_ingredients(self, ingredients):
         ingredients_list = []
         for ingredient in ingredients:
             if int(ingredient['amount']) < 1:
@@ -161,7 +160,7 @@ class RecipeSerializerPost(serializers.ModelSerializer,
                 raise serializers.ValidationError(
                     'Данные ингредиенты повторяются в рецепте!')
             ingredients_list.append(ingredient_to_check)
-        return value
+        return ingredients
 
     def add_tags_and_ingredients(self, tags_data, ingredients, recipe):
         for tag_data in tags_data:
@@ -181,7 +180,7 @@ class RecipeSerializerPost(serializers.ModelSerializer,
         tags_data = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredientamount')
         recipe = Recipe.objects.create(**validated_data)
-        recipe = self.add_tags_and_ingredients(tags_data, ingredients, recipe)
+        self.add_tags_and_ingredients(tags_data, ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
