@@ -35,7 +35,7 @@
 
 ## Запуск проекта в Docker контейнере
 * Установите и запустите Docker.
-* Запустите файл docker compose (находится в директории **../infra/**):
+* Запустите файл docker compose (находится в директории `/infra/`):
     ```bash
     docker-compose up -d --build
     ```  
@@ -64,9 +64,29 @@
     ```bash
     docker-compose exec backend python manage.py collectstatic --noinput
     ```
+* Cоздайте файл `.env` в директории `/infra/` с содержанием:
 
+    ```
+    SECRET_KEY=секретный ключ django
+    DB_ENGINE=django.db.backends.postgresql
+    DB_NAME=postgres
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    DB_HOST=db
+    DB_PORT=5432
+    ```
 
 ## Action workflow:
 В проекте Foodgram при пуше в ветку main код автоматически деплоится на сервер http://51.250.31.101/
+
+## Админ-зона
+Админ-зона: http://51.250.31.101/admin/
+
+```
+Логин и пароль суперпользователя для проверки админ-зоны:
+Email: admin@ya.ru
+Password: admin
+```
+
 
 ![example workflow](https://github.com/pikhenko/foodgram-project-react/actions/workflows/main.yml/badge.svg)
