@@ -32,6 +32,17 @@
     ```
     python -m pip install -r requirements.txt
     ```
+5. Cоздайте файл `.env` в директории `/infra/` с содержанием:
+
+    ```
+    SECRET_KEY=секретный ключ django
+    DB_ENGINE=django.db.backends.postgresql
+    DB_NAME=postgres
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    DB_HOST=db
+    DB_PORT=5432
+    ```
 
 ## Запуск проекта в Docker контейнере
 * Установите и запустите Docker.
@@ -64,18 +75,6 @@
     ```bash
     docker-compose exec backend python manage.py collectstatic --noinput
     ```
-* Cоздайте файл `.env` в директории `/infra/` с содержанием:
-
-    ```
-    SECRET_KEY=секретный ключ django
-    DB_ENGINE=django.db.backends.postgresql
-    DB_NAME=postgres
-    POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=postgres
-    DB_HOST=db
-    DB_PORT=5432
-    ```
-
 ## Action workflow:
 В проекте Foodgram при пуше в ветку main код автоматически деплоится на сервер http://51.250.31.101/
 
