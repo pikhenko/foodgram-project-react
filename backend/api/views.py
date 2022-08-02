@@ -5,8 +5,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Subscribe, Tag)
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -15,6 +13,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import User
 
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Subscribe, Tag)
 from .filters import IngredientSearchFilter, RecipeFilters
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, RecipeSerializerPost,
