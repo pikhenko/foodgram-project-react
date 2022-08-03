@@ -1,4 +1,6 @@
 # Сайт "Продуктовый помощник Foodgram"
+![example workflow](https://github.com/pikhenko/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+
 На этом сайте пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 ## Установка локально
 1. Склонируйте репозиторий:
@@ -86,6 +88,3 @@
 Email: admin@ya.ru
 Password: admin
 ```
-
-
-![example workflow](https://github.com/pikhenko/foodgram-project-react/actions/workflows/main.yml/badge.svg)
