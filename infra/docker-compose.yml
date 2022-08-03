@@ -3,8 +3,6 @@ services:
 
   db:
       image: postgres:13-alpine
-      # ports:
-      #   - "5432:5432"
       volumes:
         - /var/lib/postgresql/data/
       env_file:
@@ -12,9 +10,6 @@ services:
 
   backend:
     image: apikhenko/foodgram:latest
-  # backend:
-  #   build:
-  #     context: ../backend
     restart: always
     volumes:
       - static_value:/app/backend_static/
@@ -26,10 +21,6 @@ services:
 
   frontend:
     image: apikhenko/foodgram_front:latest
-  # frontend:
-  #   build:
-  #     context: ../frontend
-      # dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/  
   
